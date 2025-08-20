@@ -1,0 +1,82 @@
+user1 = User.objects.create_user('user1')
+user2 = User.objects.create_user('user2')
+author1 = Author.objects.create(user=user1)
+author2 = Author.objects.create(user=user2)
+
+Category.objects.create(name='Спорт')
+Category.objects.create(name='Политика')
+Category.objects.create(name='Образование')
+Category.objects.create(name='Технологии')
+
+post1 = Post.objects.create(
+    author=author1,
+    post_type=Post.ARTICLE,
+    title='Статья номер 1',
+    content='Вчера был побит мировой рекорд по прыжкам в длину! Иван Иванов Иванович прыгнул на 59 метров в длину.',
+)
+post1.categories.add(Category.objects.get(name='Спорт'))
+
+post2 = Post.objects.create(
+    author=author2,
+    post_type=Post.ARTICLE,
+    title='Статья номер 2',
+    content='Сегодня в Китае создали робота который умеет готовить!',
+)
+post2.categories.add(Category.objects.get(name='Технологии'))
+
+post3 = Post.objects.create(
+    author=author1,
+    post_type=Post.NEWS,
+    title='Новость',
+    content='В России подняли зарплату учитилям ',
+)
+post3.categories.add(Category.objects.get(name='Политика'))
+post3.categories.add(Category.objects.get(name='Образование'))
+
+comment1 = Comment.objects.create(post=post1, user=user1, text='Комментарий 1')
+comment2 = Comment.objects.create(post=post2, user=user2, text='Комментарий 2')
+comment3 = Comment.objects.create(post=post3, user=user1, text='Комментарий 3')
+comment4 = Comment.objects.create(post=post1, user=user2, text='Комментарий 4')
+
+
+post2.like()
+post2.like()
+post2.like()
+post1.dislike()
+post3.like()
+post3.like()
+post3.like()
+post3.like()
+
+comment1.like()
+comment1.like()
+comment1.like()
+comment2.dislike()
+comment2.like()
+comment2.like()
+comment3.like()
+comment3.like()
+comment4.like()
+comment4.like()
+
+author1.update_rating()
+author2.update_rating()
+
+
+best_author = Author.objects.order_by('-rating').first()
+print(f"Лучший автор: {best_author.user.username}, рейтинг: {best_author.rating}")
+
+best_post = Post.objects.order_by('-rating').first()
+print(f"Дата: {best_post.created_at}")
+print(f"Автор: {best_post.author.user.username}")
+print(f"Рейтинг: {best_post.rating}")
+print(f"Заголовок: {best_post.title}")
+print(f"Превью: {best_post.preview()}")
+
+comments = Comment.objects.filter(post=best_post)
+for comment in comments:
+    print(f"Дата: {comment.created_at}")
+    print(f"Пользователь: {comment.user.username}")
+    print(f"Рейтинг: {comment.rating}")
+    print(f"Текст: {comment.text}")
+    print("---")
