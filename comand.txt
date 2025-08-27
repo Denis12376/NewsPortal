@@ -80,3 +80,17 @@ for comment in comments:
     print(f"Рейтинг: {comment.rating}")
     print(f"Текст: {comment.text}")
     print("---")
+
+user3 = User.objects.create_user('user3')
+author3 = Author.objects.create(user=user3)
+post4 = Post.objects.create(
+    author=author3,
+    post_type=Post.ARTICLE,
+    title='Новость 2',
+    content='В Литве состоялся международный забег корги. На самые милые соревнования приехали 120 команд из разных стран Европы. В Литве состоялся международный забег корги Corgi Race. Самые быстрые хвостатые спортсмены и их хозяева собрались в Вильнюсе.',
+)
+post4.categories.add(Category.objects.get(name='Спорт'))
+post4.like()
+post4.like()
+post4.like()
+post4.like()
