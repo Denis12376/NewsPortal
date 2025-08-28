@@ -38,18 +38,52 @@ class PostCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['create_or_edit'] = "Добовление" if self.request.path == "/news/create/" else "Редактирование"
+        if 'news' in self.request.path:
+            context['create_or_edit'] = "Добавление новости"
+            context['post_type'] = 'news'
+        elif 'articles' in self.request.path:
+            context['create_or_edit'] = "Добавление статьи"
+            context['post_type'] = 'article'
         return context
+
+    def form_valid(self, form):
+        # Устанавливаем тип поста из URL
+        if 'news' in self.request.path:
+            form.instance.post_type = 'news'
+        elif 'articles' in self.request.path:
+            form.instance.post_type = 'article'
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if hasattr(self, 'object') and self.object:
+            return reverse_lazy('postid', kwargs={'pk': self.object.pk})
+        return reverse_lazy('post')
 
 class PostUpdateView(UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'post_create_or_update.html'
 
+    def get_queryset(self):
+        # Фильтруем по типу поста из URL
+        if 'news' in self.request.path:
+            return Post.objects.filter(post_type='news')
+        elif 'articles' in self.request.path:
+            return Post.objects.filter(post_type='article')
+        return Post.objects.all()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['create_or_edit'] = "Добовление" if self.request.path == "/news/create/" else "Редактирование"
+        if 'news' in self.request.path:
+            context['create_or_edit'] = "Редактирование новости"
+        elif 'articles' in self.request.path:
+            context['create_or_edit'] = "Редактирование статьи"
         return context
+
+    def get_success_url(self):
+        if hasattr(self, 'object') and self.object:
+            return reverse_lazy('postid', kwargs={'pk': self.object.pk})
+        return reverse_lazy('post')
 
 
 class PostDeleteView(DeleteView):
@@ -57,3 +91,19 @@ class PostDeleteView(DeleteView):
     template_name = 'post_delete.html'
     context_object_name = 'post'
     success_url = reverse_lazy("post")
+
+    def get_queryset(self):
+        # Фильтруем по типу поста из URL
+        if 'news' in self.request.path:
+            return Post.objects.filter(post_type='news')
+        elif 'articles' in self.request.path:
+            return Post.objects.filter(post_type='article')
+        return Post.objects.all()
+
+    def get_success_url(self):
+        # Возвращаем на нужный список в зависимости от типа
+        if 'news' in self.request.path:
+            return reverse_lazy('post')
+        elif 'articles' in self.request.path:
+            return reverse_lazy('post')
+        return reverse_lazy('posе')

@@ -10847,3 +10847,77 @@ textarea.form-control-lg {
     width: auto;
     margin-top: 10px;
 }
+.filter-form {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+.filter-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filter-btn {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.clear-btn {
+    margin-left: 10px;
+    color: #666;
+    text-decoration: none;
+}
+.date-only-filter {
+    display: flex;
+    gap: 8px;
+    align-items: end;
+    margin: 10px 0;
+}
+
+.date-only-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-only-field label {
+    font-size: 11px;
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+
+.date-only-field input[type="date"] {
+    width: 1px;
+    padding: 3px 5px;
+    font-size: 12px;
+    height: 26px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+
+.date-only-btn {
+    height: 26px;
+    padding: 0 10px;
+    font-size: 12px;
+}

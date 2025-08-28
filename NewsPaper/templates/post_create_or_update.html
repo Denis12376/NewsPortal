@@ -1,12 +1,12 @@
 {% extends 'flatpages/default.html' %}
 {% load custom_filters %}
 {% block title %}
-{{ create_or_edit }} поста
+{{ create_or_edit }}
 {% endblock title %}
 
 {% block content %}
 <div class="container mt-5"
-    <h4>{{ create_or_edit }} поста</h4>
+    <h4>{{ create_or_edit }}</h4>
     <form action="" method="post" class="filter-form">
         {% csrf_token %}
         {{ form.as_p }}
