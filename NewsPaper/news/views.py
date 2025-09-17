@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DeleteView, CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django_filters.views import FilterView
 from django.urls import reverse_lazy
 
@@ -59,10 +60,11 @@ class PostCreateView(CreateView):
             return reverse_lazy('postid', kwargs={'pk': self.object.pk})
         return reverse_lazy('post')
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'post_create_or_update.html'
+    success_url = reverse_lazy('news_list')
 
     def get_queryset(self):
         # Фильтруем по типу поста из URL

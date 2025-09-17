@@ -10834,7 +10834,7 @@ textarea.form-control-lg {
 .filter-form p {
     margin: 5px 0;
     width: 300px;
-    text-align: left;
+    text-align: center;
 }
 
 .filter-form input:not([type="submit"]),
@@ -10851,7 +10851,7 @@ textarea.form-control-lg {
     margin: 20px 0;
     padding: 15px;
     background: #f5f5f5;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .filter-fields {
