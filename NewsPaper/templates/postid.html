@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% block title %}
+Публикация № {{ post.id }}
+{% endblock title %}
+{% block content %}
+
+
+
+<h3>{{ post.title|censor }}</h3>
+<p><span style="color: #008000;">{{ post.created_at|date:'d M Y' }}<p/></span>
+<p>{{ post.content|censor }}</p>
+
+
+{% if user.is_authenticated %}
+    {% for group in user.groups.all %}
+        {% if group.name == 'authors' %}
+            <div class="edit-buttons mt-4">
+                <a href="edit" class="btn btn-primary">Редактировать</a>
+            </div>
+        {% endif %}
+    {% empty %}
+    {% endfor %}
+{% endif %}
+
+{% endblock content %}
+

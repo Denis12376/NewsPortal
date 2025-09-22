@@ -1,0 +1,138 @@
+user1 = User.objects.create_user('user1')
+user2 = User.objects.create_user('user2')
+author1 = Author.objects.create(user=user1)
+author2 = Author.objects.create(user=user2)
+
+Category.objects.create(name='Спорт')
+Category.objects.create(name='Политика')
+Category.objects.create(name='Образование')
+Category.objects.create(name='Технологии')
+
+post1 = Post.objects.create(
+    author=author1,
+    post_type=Post.ARTICLE,
+    title='Статья номер 1',
+    content='Вчера был побит мировой рекорд по прыжкам в длину! Иван Иванов Иванович прыгнул на 59 метров в длину.',
+)
+post1.categories.add(Category.objects.get(name='Спорт'))
+
+post2 = Post.objects.create(
+    author=author2,
+    post_type=Post.ARTICLE,
+    title='Статья номер 2',
+    content='Сегодня в Китае создали робота который умеет готовить!',
+)
+post2.categories.add(Category.objects.get(name='Технологии'))
+
+post3 = Post.objects.create(
+    author=author1,
+    post_type=Post.NEWS,
+    title='Новость',
+    content='В России подняли зарплату учитилям ',
+)
+post3.categories.add(Category.objects.get(name='Политика'))
+post3.categories.add(Category.objects.get(name='Образование'))
+
+comment1 = Comment.objects.create(post=post1, user=user1, text='Комментарий 1')
+comment2 = Comment.objects.create(post=post2, user=user2, text='Комментарий 2')
+comment3 = Comment.objects.create(post=post3, user=user1, text='Комментарий 3')
+comment4 = Comment.objects.create(post=post1, user=user2, text='Комментарий 4')
+
+
+post2.like()
+post2.like()
+post2.like()
+post1.dislike()
+post3.like()
+post3.like()
+post3.like()
+post3.like()
+
+comment1.like()
+comment1.like()
+comment1.like()
+comment2.dislike()
+comment2.like()
+comment2.like()
+comment3.like()
+comment3.like()
+comment4.like()
+comment4.like()
+
+author1.update_rating()
+author2.update_rating()
+
+
+best_author = Author.objects.order_by('-rating').first()
+print(f"Лучший автор: {best_author.user.username}, рейтинг: {best_author.rating}")
+
+best_post = Post.objects.order_by('-rating').first()
+print(f"Дата: {best_post.created_at}")
+print(f"Автор: {best_post.author.user.username}")
+print(f"Рейтинг: {best_post.rating}")
+print(f"Заголовок: {best_post.title}")
+print(f"Превью: {best_post.preview()}")
+
+comments = Comment.objects.filter(post=best_post)
+for comment in comments:
+    print(f"Дата: {comment.created_at}")
+    print(f"Пользователь: {comment.user.username}")
+    print(f"Рейтинг: {comment.rating}")
+    print(f"Текст: {comment.text}")
+    print("---")
+
+user3 = User.objects.create_user('user3')
+author3 = Author.objects.create(user=user3)
+post4 = Post.objects.create(
+    author=author3,
+    post_type=Post.ARTICLE,
+    title='Новость 2',
+    content='В Литве состоялся международный забег корги. На самые милые соревнования приехали 120 команд из разных стран Европы. В Литве состоялся международный забег корги Corgi Race. Самые быстрые хвостатые спортсмены и их хозяева собрались в Вильнюсе.',
+)
+post4.categories.add(Category.objects.get(name='Спорт'))
+post4.like()
+post4.like()
+post4.like()
+post4.like()
+
+user4 = User.objects.create_user('Екатерина')
+author4 = Author.objects.create(user=user4)
+post5 = Post.objects.create(
+    author=author4,
+    post_type=Post.ARTICLE,
+    title='Статья номер 4',
+    content='Почему птицы не погибают, когда сидят на линиях электропередач? Провода в высоковольтных линиях электропередач не заключены в резиновую изоляцию, они просто закреплены на опорах с помощью изоляторов и таким образом электрически касаются только источника и потребителя тока. Дело в том, что когда птица садится на провод, то создается параллельное соединение проводников. Одним проводником служит сама птица, а другим – участок провода под ногами у птицы. Сопротивление птицы во много-много раз больше сопротивления провода, поэтому по ней протекает ничтожно малый ток, который не может ей повредить.'
+)
+post5.categories.add(Category.objects.get(name='Образование'))
+
+user4 = User.objects.create_user('Екатерина')
+author4 = Author.objects.create(user=user4)
+post6 = Post.objects.create(
+    author=author4,
+    post_type=Post.ARTICLE,
+    title='Статья номер 5',
+    content='Зачем кошки шевелят ушами? Кошка вращает ушами для того, чтобы лучше слышать. Симпатичные ушки на макушке – это самые настоящие радары, улавливающие даже неслышные человеку шумы. Направленная к источнику звука раковина улавливает звуковые сигналы и передает их среднему уху. Раковина позволяет усилить восприятие звука аж на 20% . Таким образом, кошка может не только лучше расслышать, но и определить нахождение источника шумов. Это незаменимая способность, без которой не возможна жизнь питомца на улице. Хороший слух с возможностью определить направление звука помогают кошке охотиться и скрываться от врагов.'
+)
+post6.categories.add(Category.objects.get(name='Образование'))
+
+
+post7 = Post.objects.create(
+    author=author4,
+    post_type=Post.ARTICLE,
+    title='Статья номер 7',
+    content='Корм для водных черепах. В отличие от сухопутных собратьев водные черепахи предпочитают рационы из белков животного происхождения, так как по природе своей они являются хищниками. При этом рептилии также употребляют в пищу водоросли и другие доступные растения, но в ограниченном количестве. Нехватка белка и кормление только растительной пищей приводит к развитию у рептилий серьезных заболеваний, а иногда и к летальному исходу, поэтому рекомендуется отдавать предпочтение сбалансированным производственным рационам.'
+)
+post7.categories.add(Category.objects.get(name='Образование'))
+
+post6.like()
+post6.like()
+post6.like()
+post6.like()
+post6.like()
+post6.like()
+post6.like()
+post6.like()
+post6.like()
+post7.like()
+post7.like()
+post7.like()

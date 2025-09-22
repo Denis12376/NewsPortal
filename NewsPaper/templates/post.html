@@ -1,0 +1,61 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% block title %}Все Новости{% endblock title %}
+
+{% block content %}
+<h1>Все новости</h1>
+<h3>Количество: {{ paginator.count }}</h3>
+{% if posts %}
+    {% with sorted_posts=posts|sort_by_time_desc %}
+    <h4>Поиск постов</h4>
+    <form action="" method="get" class="filter-form">
+        {{ filter.form.as_p }}
+        <input type="submit" value="Применить">
+    </form>
+
+    <table style="margin: 0 auto; border-collapse: separate; border-spacing: 25px 5px;">
+        <tr>
+            <td><h3>Заголовок</h3></td>
+            <td><h3>Дата публикации</h3></td>
+            <td><h3>Содержание</h3></td>
+            <td><h3>Автор</h3></td>
+            <td><h3>Категории</h3></td>
+        </tr>
+        {% for post in sorted_posts %}
+        <tr>
+            <td>{{ post.title|censor }}</td>
+            <td>{{ post.created_at|date:'d M Y' }}</td>
+            <td>{{ post.content|censor|truncatechars:20}}</td>
+            <td>{{ post.author.user.username }}</td>
+            {% for cat in post.categories.all %}
+            <td>{{ cat.name }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endwith %}
+{% else %}
+    <h2>Доступных новостей нет:(<h2/>
+{% endif %}
+
+    {# Упрощенная версия пагинации #}
+
+    {% if page_obj.has_previous %}
+        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page=1">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+{% endblock content %}
