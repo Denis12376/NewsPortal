@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Подписка на категории
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+     <div class="shadow-lg border-0 rounded-4 p-4 text-center" style="width: 100%; max-width: 600px">
+         <h4 class="text-primary">Подписка на категории</h4>
+         {% for category in categories %}
+             <h3 class="text-danger">{{ category.name }}</h3>
+             <a href="{% url 'unsubscribe' category.id %}"class="btn btn-danger">Отписаться</a>
+             <a href="{% url 'subscribe' category.id %}"class="btn btn-primary">Подписаться</a>
+         {% endfor %}
+     </div>
+</div>
+{% endblock content %}

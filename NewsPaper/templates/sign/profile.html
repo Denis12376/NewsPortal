@@ -9,10 +9,11 @@
      <div class="shadow-lg border-0 rounded-4 p-4 text-center" style="width: 100%; max-width: 600px">
          <h4 class="text-primary">Страничка авторизованного пользователя</h4>
          <h3 class="text-danger">{{user.username}}</h3>
-         <a href="{% url 'account_logout' %}"class="btn btn-outline-danger mt-2">Выйти</a>
-         {% if user.is_authenticated and not user.groups.filter.name is 'authors' %}
-            <a href="{% url 'become_author' %}">Стать автором</a>
+         <a href="{% url 'account_logout' %}"class="btn btn-outline-danger">Выйти</a>
+         {% if not user.groups.filter.name is 'authors' %}
+            <a href="{% url 'become_author' %}"class="btn btn-primary">Стать автором</a>
          {% endif %}
+         <a href="/categories/"class="btn btn-primary">Подписка на категории</a>
      </div>
 </div>
 {% endblock content %}

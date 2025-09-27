@@ -7,7 +7,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, UserForm
-from .models import Post
+from .models import Post, Author, Category
 from .filters import PostFilter
 
 
@@ -38,7 +38,7 @@ class newsdetails(DeleteView):
     template_name = 'postid.html'
     context_object_name = 'post'
 
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'post_create_or_update.html'
@@ -47,18 +47,20 @@ class PostCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         if 'news' in self.request.path:
             context['create_or_edit'] = "Добавление новости"
-            context['post_type'] = 'news'
+            context['post_type'] = 'NW'
         elif 'articles' in self.request.path:
             context['create_or_edit'] = "Добавление статьи"
-            context['post_type'] = 'article'
+            context['post_type'] = 'AR'
         return context
 
     def form_valid(self, form):
-        # Устанавливаем тип поста из URL
-        if 'news' in self.request.path:
-            form.instance.post_type = 'news'
-        elif 'articles' in self.request.path:
-            form.instance.post_type = 'article'
+        post = form.save(commit=False)
+        post.author = self.request.user.author
+        if 'articles' in self.request.path:
+            post.post_type = 'AR'
+        else:
+            post.post_type = 'NW'
+        post.save()
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -66,7 +68,7 @@ class PostCreateView(CreateView):
             return reverse_lazy('postid', kwargs={'pk': self.object.pk})
         return reverse_lazy('post')
 
-class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'post_create_or_update.html'
@@ -77,9 +79,9 @@ class PostUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         # Фильтруем по типу поста из URL
         if 'news' in self.request.path:
-            return Post.objects.filter(post_type='news')
+            return Post.objects.filter(post_type='NW')
         elif 'articles' in self.request.path:
-            return Post.objects.filter(post_type='article')
+            return Post.objects.filter(post_type='AR')
         return Post.objects.all()
 
     def get_context_data(self, **kwargs):
@@ -106,9 +108,9 @@ class PostDeleteView(DeleteView):
     def get_queryset(self):
         # Фильтруем по типу поста из URL
         if 'news' in self.request.path:
-            return Post.objects.filter(post_type='news')
+            return Post.objects.filter(post_type='NW')
         elif 'articles' in self.request.path:
-            return Post.objects.filter(post_type='article')
+            return Post.objects.filter(post_type='AR')
         return Post.objects.all()
 
     def get_success_url(self):
@@ -129,11 +131,30 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = 'category_list.html'
+    context_object_name = 'categories'
+
+@login_required
+def subscribe(request, pk):
+    category = Category.objects.get(pk=pk)
+    if not category.subscribers.filter(id=request.user.id).exists():
+        category.subscribers.add(request.user)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def unsubscribe(request, pk):
+    category = Category.objects.get(pk=pk)
+    category.subscribers.remove(request.user)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
 
 @login_required
 def become_author(request):
     user = request.user
     authors_group = Group.objects.get(name='authors')
     if not user.groups.filter(name='authors').exists():
-        authors_group.user_set.add(user)
-    return redirect('/sign/profile')
+        Author.objects.create(user=user)
+    return redirect('/main/')

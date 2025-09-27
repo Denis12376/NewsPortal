@@ -150,9 +150,12 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_METHODS = {'username','email'}
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGOUT_REDIRECT_URL = '/main'
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
 ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
+
+
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -172,3 +175,14 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.yandex.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'pomoikamorris'
+EMAIL_HOST_PASSWORD = 'uhqtpkfdurayfcwj'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'pomoikamorris@yandex.ru'
+
+SITE_URL = 'http://127.0.0.1:8000'
