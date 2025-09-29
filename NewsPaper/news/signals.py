@@ -6,6 +6,8 @@ from django.db.models.signals import m2m_changed
 from django.utils import timezone
 from datetime import timedelta
 from django.core.management.base import BaseCommand
+from django.db.models.signals import post_save
+from .tasks import send_post_notifications_task
 
 
 from .models import Category, Post
@@ -70,12 +72,12 @@ class Command(BaseCommand):
             posts_list += f"   Дата: {post.created_at.strftime('%d.%m.%Y %H:%M')}\n"
             posts_list += f"   Кратко: {post.content[:20]}...\n\n"
         send_mail(
-            subject='Отписка от категории',
+            subject='Еженедельная рассылка',
             message= posts_list,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
         )
-
+'''
 def send_post_notification(user, post, category):
     send_mail(
         subject='Новая публикация!',
@@ -86,3 +88,8 @@ def send_post_notification(user, post, category):
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
     )
+ '''
+@receiver(post_save, sender=Post)
+def send_post_notification(sender, instance, created, **kwargs):
+    if created:
+        send_post_notifications_task.delay(instance.id)
