@@ -156,5 +156,7 @@ def become_author(request):
     user = request.user
     authors_group = Group.objects.get(name='authors')
     if not user.groups.filter(name='authors').exists():
+        user.groups.add(authors_group)
         Author.objects.create(user=user)
+
     return redirect('/main/')
